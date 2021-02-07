@@ -198,12 +198,6 @@ class MirrorListener(listeners.MirrorListeners):
 def _mirror(bot, update, isTar=False, extract=False):
     message_args = update.message.text.split(' ')
     name_args = update.message.text.split('|')
-    try:
-        link = message_args[1]
-        if link.startswith("|") or link.startswith("pswd: "):
-            link = ''
-    except IndexError:
-        link = ''
     LOGGER.info(link)
     link = link.strip()
     reply_to = update.message.reply_to_message
@@ -219,7 +213,7 @@ def _mirror(bot, update, isTar=False, extract=False):
         if not bot_utils.is_url(link) and not bot_utils.is_magnet(link) or len(link) == 0:
             if file is not None:
                 if file.mime_type != "application/x-bittorrent":
-                    listener = MirrorListener(bot, update, pswd, isTar, tag, extract)
+                    listener = MirrorListener(bot, update, isTar, tag, extract)
                     tg_downloader = TelegramDownloadHelper(listener)
                     tg_downloader.add_download(reply_to, f'{DOWNLOAD_DIR}{listener.uid}/', name)
                     sendStatusMessage(update, bot)
