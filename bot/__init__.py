@@ -66,6 +66,13 @@ if os.path.exists('authorized_chats.txt'):
         for line in lines:
             #    LOGGER.info(line.split())
             AUTHORIZED_CHATS.add(int(line.split()[0]))
+try:
+    achats = getConfig('AUTHORIZED_CHATS')
+    achats = achats.split(" ")
+    for chats in achats:
+        AUTHORIZED_CHATS.add(int(chats))
+except:
+    pass
 
 try:
     BOT_TOKEN = getConfig('BOT_TOKEN')
