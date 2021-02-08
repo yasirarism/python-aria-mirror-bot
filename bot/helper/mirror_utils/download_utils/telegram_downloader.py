@@ -106,9 +106,9 @@ class TelegramDownloadHelper(DownloadHelper):
                 LOGGER.info(f'Downloading telegram file with id: {media.file_id}')
                 threading.Thread(target=self.__download, args=(_message, path)).start()
             else:
-                self.__onDownloadError('File already being downloaded!')
+                self.__onDownloadError('File sedang didownload, harap sabar!')
         else:
-            self.__onDownloadError('No document in the replied message')
+            self.__onDownloadError('Tidak ada dokumen yang dibaalas')
 
     def cancel_download(self):
         LOGGER.info(f'Cancelling download on user request: {self.gid}')
