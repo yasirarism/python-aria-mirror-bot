@@ -13,3 +13,4 @@ Pyrogram>=0.16.0,<0.16.10
 TgCrypto>=1.1.1,<1.1.10
 youtube_dl
 telegraph
+lxml
