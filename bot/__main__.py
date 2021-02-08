@@ -13,7 +13,7 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import *
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
 from .helper.telegram_helper.filters import CustomFilters
-from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch
+from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, delete
 
 
 @run_async
@@ -23,14 +23,21 @@ def stats(update, context):
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
+    sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
+    recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     cpuUsage = psutil.cpu_percent(interval=0.5)
     memory = psutil.virtual_memory().percent
-    stats = f'Bot Uptime: {currentTime}\n' \
-            f'Total disk space: {total}\n' \
-            f'Used: {used}\n' \
-            f'Free: {free}\n' \
-            f'CPU: {cpuUsage}%\n' \
-            f'RAM: {memory}%'
+    disk = psutil.disk_usage('/').percent
+    stats = f'<b>📈 Statistik</b>\n\n' \
+            f'<b>🧭 Bot Uptime: </b> <code>{currentTime}</code>\n' \
+            f'<b>💾 Total Ruang Penyimpanan: </b> <code>{total}</code>\n' \
+            f'<b>📀 Ruang Digunakan:</b> <code>{used}</code>\n' \
+            f'<b>💿 Ruang Kosong:</b> <code>{free}</code>\n\n' \
+            f'📊 Penggunaan Data 📊\n<b>🔼 Unggah: </b> <code>{sent}</code>\n' \
+            f'<b>🔽 Unduh: </b> <code>{recv}</code>\n\n' \
+            f'<b>🎛 CPU:</b> <code>{cpuUsage}%</code>' \
+            f'<b>RAM:</b> <code>{memory}</code>% ' \
+            f'<b>Disk:</b> <code>{disk}%</code>'
     sendMessage(stats, context.bot, update)
 
 
@@ -70,29 +77,17 @@ def log(update, context):
 def bot_help(update, context):
     help_string = f'''
 /{BotCommands.HelpCommand}: To get this message
-
 /{BotCommands.MirrorCommand} [download_url][magnet_link]: Start mirroring the link to google drive
-
 /{BotCommands.UnzipMirrorCommand} [download_url][magnet_link] : starts mirroring and if downloaded file is any archive , extracts it to google drive
-
 /{BotCommands.TarMirrorCommand} [download_url][magnet_link]: start mirroring and upload the archived (.tar) version of the download
-
 /{BotCommands.WatchCommand} [youtube-dl supported link]: Mirror through youtube-dl. Click /{BotCommands.WatchCommand} for more help.
-
 /{BotCommands.TarWatchCommand} [youtube-dl supported link]: Mirror through youtube-dl and tar before uploading
-
 /{BotCommands.CancelMirror} : Reply to the message by which the download was initiated and that download will be cancelled
-
 /{BotCommands.StatusCommand}: Shows a status of all the downloads
-
 /{BotCommands.ListCommand} [search term]: Searches the search term in the Google drive, if found replies with the link
-
 /{BotCommands.StatsCommand}: Show Stats of the machine the bot is hosted on
-
 /{BotCommands.AuthorizeCommand}: Authorize a chat or a user to use the bot (Can only be invoked by owner of the bot)
-
 /{BotCommands.LogCommand}: Get a log file of the bot. Handy for getting crash reports
-
 '''
     sendMessage(help_string, context.bot, update)
 
@@ -103,7 +98,7 @@ def main():
     if path.exists('restart.pickle'):
         with open('restart.pickle', 'rb') as status:
             restart_message = pickle.load(status)
-        restart_message.edit_text("Restarted Successfully!")
+        restart_message.edit_text("Berhasil direstart!")
         remove('restart.pickle')
 
     start_handler = CommandHandler(BotCommands.StartCommand, start,
