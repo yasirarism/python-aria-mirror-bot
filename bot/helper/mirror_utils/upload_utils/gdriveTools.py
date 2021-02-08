@@ -311,7 +311,7 @@ class GoogleDriveHelper:
         try:
             file_id = self.getIdFromUrl(link)
         except (KeyError,IndexError):
-            msg = "Google drive ID could not be found in the provided link"
+            msg = "Google drive ID tidak bisa aku temukan"
             return msg, ""
         msg = ""
         LOGGER.info(f"File ID: {file_id}")
@@ -379,7 +379,7 @@ class GoogleDriveHelper:
             elif "File not found" in str(err):
                 msg = "❌ File tidak ditemukan."
             else:
-                msg = f"💢 Error.\n{err}"
+                msg = f"❌ Maaf nih, linknya udah kena limit. Coba besok lagi yahh.."
             return msg, ""
         return msg, InlineKeyboardMarkup(buttons.build_menu(2))
 
