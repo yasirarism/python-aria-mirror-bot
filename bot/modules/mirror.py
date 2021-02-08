@@ -24,17 +24,19 @@ import pathlib
 import os
 import subprocess
 import threading
+import re
 
 ariaDlManager = AriaDownloadHelper()
 ariaDlManager.start_listener()
 
 
 class MirrorListener(listeners.MirrorListeners):
-    def __init__(self, bot, update, isTar=False, tag=None, extract=False):
+    def __init__(self, bot, update, pswd, isTar=False, tag=None, extract=False):
         super().__init__(bot, update)
         self.isTar = isTar
         self.tag = tag
         self.extract = extract
+        self.pswd = pswd
 
     def onDownloadStarted(self):
         pass
@@ -77,7 +79,11 @@ class MirrorListener(listeners.MirrorListeners):
                 )
                 with download_dict_lock:
                     download_dict[self.uid] = ExtractStatus(name, m_path, size)
-                archive_result = subprocess.run(["extract", m_path])
+                pswd = self.pswd
+                if pswd is not None:
+                    archive_result = subprocess.run(["pextract", m_path, pswd])
+                else:
+                    archive_result = subprocess.run(["extract", m_path])
                 if archive_result.returncode == 0:
                     threading.Thread(target=os.remove, args=(m_path,)).start()
                     LOGGER.info(f"Deleting archive : {m_path}")
@@ -196,22 +202,25 @@ class MirrorListener(listeners.MirrorListeners):
 
 
 def _mirror(bot, update, isTar=False, extract=False):
-    if update.message.from_user.last_name:
-        last_name = f" {update.message.from_user.last_name}"
-    else:
-        last_name = ""
-    if update.message.from_user.username:
-        username = f"- @{update.message.from_user.username}"
-    else:
-        username = "-"
-    name = f'<a href="tg://user?id={update.message.from_user.id}">{update.message.from_user.first_name}{last_name}</a>'
-    msg = f"User: {name} {username} (<code>{update.message.from_user.id}</code>)\n"
-
     message_args = update.message.text.split(' ')
+    name_args = update.message.text.split('|')
     try:
         link = message_args[1]
+        if link.startswith("|") or link.startswith("pswd: "):
+            link = ''
     except IndexError:
         link = ''
+    try:
+        name = name_args[1]
+        name = name.strip()
+        if name.startswith("pswd: "):
+            name = ''
+    except IndexError:
+        name = ''
+    pswd = re.search('(?<=pswd: )(.*)', update.message.text)
+    if pswd is not None:
+      pswd = pswd.groups()
+      pswd = " ".join(pswd)
     LOGGER.info(link)
     link = link.strip()
     reply_to = update.message.reply_to_message
@@ -227,7 +236,7 @@ def _mirror(bot, update, isTar=False, extract=False):
         if not bot_utils.is_url(link) and not bot_utils.is_magnet(link) or len(link) == 0:
             if file is not None:
                 if file.mime_type != "application/x-bittorrent":
-                    listener = MirrorListener(bot, update, isTar, tag, extract)
+                    listener = MirrorListener(bot, update, pswd, isTar, tag, extract)
                     tg_downloader = TelegramDownloadHelper(listener)
                     tg_downloader.add_download(reply_to, f'{DOWNLOAD_DIR}{listener.uid}/', name)
                     sendStatusMessage(update, bot)
@@ -246,7 +255,7 @@ def _mirror(bot, update, isTar=False, extract=False):
         link = direct_link_generator(link)
     except DirectDownloadLinkException as e:
         LOGGER.info(f'{link}: {e}')
-    listener = MirrorListener(bot, update, isTar, tag, extract)
+    listener = MirrorListener(bot, update, pswd, isTar, tag, extract)
     if bot_utils.is_mega_link(link):
         if BLOCK_MEGA_LINKS:
             sendMessage("Mega links are blocked bcoz mega downloading is too much unstable and buggy. mega support will be added back after fix", bot, update)
