@@ -56,7 +56,7 @@ def get_readable_file_size(size_in_bytes) -> str:
     try:
         return f'{round(size_in_bytes, 2)}{SIZE_UNITS[index]}'
     except IndexError:
-        return 'File too large'
+        return 'File terlalu besar'
 
 
 def getDownloadByGid(gid):
@@ -93,14 +93,14 @@ def get_readable_message():
         msg = ""
         for download in list(download_dict.values()):
             msg += f"<b>📁 Nama File :</b> <code>{download.name()}</code>"
-            msg += f"\n<b>Status :</b> <i>{download.status()}</i>"
+            msg += f"\n<b>⬇️ Status :</b> <i>{download.status()}</i>"
             if download.status() != MirrorStatus.STATUS_ARCHIVING and download.status() != MirrorStatus.STATUS_EXTRACTING:
-                msg += f"\n<code>{get_progress_bar_string(download)} {download.progress()}</code>"
+                msg += f"\n🌀 <code>{get_progress_bar_string(download)} {download.progress()}</code>"
                 if download.status() == MirrorStatus.STATUS_DOWNLOADING:
-                    msg += f"\n<b>Terdownload :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
+                    msg += f"\n<b>📦 Terdownload :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
                 else:
-                    msg += f"\n<b>Terupload :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
-                msg += f"\n<b>Kecepatan :</b> {download.speed()}, \n<b>ETA:</b> {download.eta()} "
+                    msg += f"\n<b>☑️ Terupload :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
+                msg += f"\n<b>⚡️ Kecepatan :</b> {download.speed()}, \n<b>ETA:</b> {download.eta()} "
                 # if hasattr(download, 'is_torrent'):
                 try:
                     msg += f"\n<b>Info :- Seeders:</b> {download.aria_download().num_seeders}" \
