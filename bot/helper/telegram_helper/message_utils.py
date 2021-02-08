@@ -8,7 +8,6 @@ from bot.helper.ext_utils.bot_utils import get_readable_message
 from telegram.error import TimedOut, BadRequest
 from bot import bot
 
-
 def sendMessage(text: str, bot, update: Update):
     try:
         return bot.send_message(update.message.chat_id,
@@ -17,19 +16,23 @@ def sendMessage(text: str, bot, update: Update):
     except Exception as e:
         LOGGER.error(str(e))
 
-def sendMarkup(text: str, bot, update: Update, reply_markup: InlineKeyboardMarkup):
-    return bot.send_message(update.message.chat_id,
-                            reply_to_message_id=update.message.message_id,
-                            text=text, reply_markup=reply_markup, parse_mode='HTMl')
 
-def editMessage(text: str, message: Message):
+def sendMarkup(text: str, bot, update: Update, reply_markup: InlineKeyboardMarkup):
     try:
-        bot.edit_message_text(text=text, message_id=message.message_id,
-                              chat_id=message.chat.id,
-                              parse_mode='HTMl')
+        return bot.send_message(update.message.chat_id,
+                             reply_to_message_id=update.message.message_id,
+                             text=text, reply_markup=reply_markup, parse_mode='HTMl')
     except Exception as e:
         LOGGER.error(str(e))
 
+
+def editMessage(text: str, message: Message, reply_markup=None):
+    try:
+        bot.edit_message_text(text=text, message_id=message.message_id,
+                              chat_id=message.chat.id,reply_markup=reply_markup,
+                              parse_mode='HTMl')
+    except Exception as e:
+        LOGGER.error(str(e))
 
 def deleteMessage(bot, message: Message):
     try:
