@@ -196,8 +196,22 @@ class MirrorListener(listeners.MirrorListeners):
 
 
 def _mirror(bot, update, isTar=False, extract=False):
+    if update.message.from_user.last_name:
+        last_name = f" {update.message.from_user.last_name}"
+    else:
+        last_name = ""
+    if update.message.from_user.username:
+        username = f"- @{update.message.from_user.username}"
+    else:
+        username = "-"
+    name = f'<a href="tg://user?id={update.message.from_user.id}">{update.message.from_user.first_name}{last_name}</a>'
+    msg = f"User: {name} {username} (<code>{update.message.from_user.id}</code>)\n"
+
     message_args = update.message.text.split(' ')
-    name_args = update.message.text.split('|')
+    try:
+        link = message_args[1]
+    except IndexError:
+        link = ''
     LOGGER.info(link)
     link = link.strip()
     reply_to = update.message.reply_to_message
