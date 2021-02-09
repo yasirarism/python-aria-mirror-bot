@@ -35,7 +35,7 @@ def stats(update, context):
             f'<b>💿 Ruang Kosong:</b> <code>{free}</code>\n\n' \
             f'📊 Penggunaan Data 📊\n<b>🔼 Unggah: </b> <code>{sent}</code>\n' \
             f'<b>🔽 Unduh: </b> <code>{recv}</code>\n\n' \
-            f'<b>🎛 CPU:</b> <code>{cpuUsage}%</code>' \
+            f'<b>🎛 CPU:</b> <code>{cpuUsage}%</code> ' \
             f'<b>RAM:</b> <code>{memory}</code>% ' \
             f'<b>Disk:</b> <code>{disk}%</code>'
     sendMessage(stats, context.bot, update)
@@ -76,7 +76,7 @@ def log(update, context):
 @run_async
 def bot_help(update, context):
     help_string = f'''
-/{BotCommands.HelpCommand}: To get this message
+/{BotCommands.HelpCommand}: Untuk melihat bantuan.
 /{BotCommands.MirrorCommand} [download_url][magnet_link]: Start mirroring the link to google drive
 /{BotCommands.UnzipMirrorCommand} [download_url][magnet_link] : starts mirroring and if downloaded file is any archive , extracts it to google drive
 /{BotCommands.TarMirrorCommand} [download_url][magnet_link]: start mirroring and upload the archived (.tar) version of the download
