@@ -108,9 +108,10 @@ def get_readable_message():
                 except:
                     pass
             if download.status() == MirrorStatus.STATUS_DOWNLOADING:
-                msg += f"\n<b>GID</b>: <code>{download.gid()}</code>"
+                msg += f"\n❌ <code>/cancel {download.gid()}</code>"
             msg += "\n\n"
         return msg
+
 
 
 def get_readable_time(seconds: int) -> str:
@@ -118,17 +119,17 @@ def get_readable_time(seconds: int) -> str:
     (days, remainder) = divmod(seconds, 86400)
     days = int(days)
     if days != 0:
-        result += f'{hari}d'
+        result += f'{days}d'
     (hours, remainder) = divmod(remainder, 3600)
     hours = int(hours)
     if hours != 0:
-        result += f'{jam}h'
+        result += f'{hours}h'
     (minutes, seconds) = divmod(remainder, 60)
     minutes = int(minutes)
     if minutes != 0:
-        result += f'{menit}m'
+        result += f'{minutes}m'
     seconds = int(seconds)
-    result += f'{detik}s'
+    result += f'{seconds}s'
     return result
 
 
