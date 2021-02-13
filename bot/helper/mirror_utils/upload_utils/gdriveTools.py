@@ -511,7 +511,7 @@ class GoogleDriveHelper:
                                                spaces='drive',
                                                pageSize=200,
                                                fields='files(id, name, mimeType, size)',
-                                               orderBy='modifiedTime desc').execute()
+                                               orderBy='name asc').execute()
 
         content_count = 0
         if response["files"]:
