@@ -156,7 +156,7 @@ class YoutubeDLHelper(DownloadHelper):
         LOGGER.info(f"Downloading with YT-DL: {link}")
         self.__gid = f"{self.vid_id}{self.__listener.uid}"
         if qual == "audio":
-          self.opts['format'] = 'bestaudio/best'
+          self.opts['format'] = 'bestvideo+bestaudio/best'
           self.opts['postprocessors'] = [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}]
         else:
           self.opts['format'] = qual
